@@ -15,7 +15,6 @@
 <script>
 import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.entry";
-//"https://xddt.obs.cn-east-3.myhuaweicloud.com/clogx6uwh0t33tenant/apps/plan/f0/0d/f00d932268c54fd0b7d88bf065f4a564.pdf"
 export default {
   name: "HelloWorld",
   props: {
@@ -25,13 +24,18 @@ export default {
     return {
       errMessage:'',
       totalPage: 0,
-      waterMark: "waterMark",
+      waterMark: "",
       message: "Hello, world!",
       src: "https://xddt.obs.cn-east-3.myhuaweicloud.com/clogx6uwh0t33tenant/apps/plan/f0/0d/f00d932268c54fd0b7d88bf065f4a564.pdf",
     };
   },
   created(){
-    window.addEventListener('message', this.handlePdfLink, false);
+    this.waterMark = this.$route.query.name
+    const file = this.$route.query.file;
+    const first = file.slice(0,2);
+    const second = file.slice(2,4)
+    this.src = `https://xddt.obs.cn-east-3.myhuaweicloud.com/clogx6uwh0t33tenant/apps/plan/${first}/${second}/${file}`
+    console.log(this.$route,'11111111')
   },
   mounted() {
     // console.log(pdfjsWorker)
@@ -40,7 +44,7 @@ export default {
   },
   beforeDestroy() {
     // Clean up the event listener when the component is destroyed
-    window.removeEventListener('message', this.handlePdfLink);
+    
   },
   methods: {
     handlePdfLink(event) {
@@ -50,7 +54,7 @@ export default {
       console.log(pageNum);
       const canvas = this.$refs[`pdfCanvas${pageNum}`][0];
       const context = canvas.getContext("2d");
-      const watermarkText = "abc";
+      const watermarkText = this.waterMark;
       const fontSize = 40;
       const opacity = 0.1; // Adjust opacity of watermark
       const angle = 45; // Angle of the watermark
@@ -91,7 +95,7 @@ export default {
     },
     async viewPDF() {
       pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-      pdfjsLib.getDocument('./1.pdf').promise.then(async (pdf) => {
+      pdfjsLib.getDocument(this.src).promise.then(async (pdf) => {
         console.log(pdf.numPages);
         this.totalPage = pdf.numPages;
         const pageNum = pdf.numPages;
