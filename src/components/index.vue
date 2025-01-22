@@ -1,5 +1,6 @@
 <template>
   <div class="main-container">
+ 
     <div
       v-for="pageNumber in totalPage"
       :key="pageNumber"
@@ -30,7 +31,7 @@ export default {
     };
   },
   created(){
-    this.waterMark = this.$route.query.name
+    this.waterMark = this.$route.query.name;
     const file = this.$route.query.file;
     const first = file.slice(0,2);
     const second = file.slice(2,4)
@@ -95,7 +96,7 @@ export default {
     },
     async viewPDF() {
       pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-      pdfjsLib.getDocument(this.src).promise.then(async (pdf) => {
+      pdfjsLib.getDocument('./1.pdf').promise.then(async (pdf) => {
         console.log(pdf.numPages);
         this.totalPage = pdf.numPages;
         const pageNum = pdf.numPages;
@@ -118,7 +119,7 @@ export default {
         const context = canvas.getContext("2d");
         const page = await pdf.getPage(pageNum);
         console.log(page, "99999");
-        const viewport = page.getViewport({ scale: 1 });
+        const viewport = page.getViewport({ scale: 0.8 });
         canvas.width = viewport.width;
         canvas.height = viewport.height;
         const renderContext = {
@@ -133,7 +134,7 @@ export default {
       //   this.addWaterMark(0)
       // },500)
     },
-  },
+  }
 };
 </script>
 
