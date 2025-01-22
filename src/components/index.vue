@@ -130,7 +130,7 @@ export default {
         //   containerWidth / initialViewport.width,
         //   containerHeight / initialViewport.height
         // );
-        const viewport = page.getViewport({ scale: 2 });
+        const viewport = page.getViewport({ scale: 1.3 });
         canvas.width = viewport.width;
         canvas.height = viewport.height;
         const renderContext = {
