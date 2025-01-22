@@ -1,11 +1,11 @@
 <template>
   <div class="main-container">
- 
     <div
       v-for="pageNumber in totalPage"
       :key="pageNumber"
       class="pdf-container"
       style="text-align: center"
+      ref="pdfContainer"
     >
       <canvas :ref="'pdfCanvas' + pageNumber"></canvas>
     </div>
@@ -23,20 +23,20 @@ export default {
   },
   data() {
     return {
-      errMessage:'',
+      errMessage: "",
       totalPage: 0,
       waterMark: "",
       message: "Hello, world!",
       src: "https://xddt.obs.cn-east-3.myhuaweicloud.com/clogx6uwh0t33tenant/apps/plan/f0/0d/f00d932268c54fd0b7d88bf065f4a564.pdf",
     };
   },
-  created(){
+  created() {
     this.waterMark = this.$route.query.name;
     const file = this.$route.query.file;
-    const first = file.slice(0,2);
-    const second = file.slice(2,4)
-    this.src = `https://xddt.obs.cn-east-3.myhuaweicloud.com/clogx6uwh0t33tenant/apps/plan/${first}/${second}/${file}`
-    console.log(this.$route,'11111111')
+    const first = file.slice(0, 2);
+    const second = file.slice(2, 4);
+    this.src = `https://xddt.obs.cn-east-3.myhuaweicloud.com/clogx6uwh0t33tenant/apps/plan/${first}/${second}/${file}`;
+    console.log(this.$route, "11111111");
   },
   mounted() {
     // console.log(pdfjsWorker)
@@ -45,11 +45,10 @@ export default {
   },
   beforeDestroy() {
     // Clean up the event listener when the component is destroyed
-    
   },
   methods: {
     handlePdfLink(event) {
-      console.log(event.data)
+      console.log(event.data);
     },
     addWaterMark(pageNum) {
       console.log(pageNum);
@@ -96,21 +95,24 @@ export default {
     },
     async viewPDF() {
       pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-      pdfjsLib.getDocument('./1.pdf').promise.then(async (pdf) => {
-        console.log(pdf.numPages);
-        this.totalPage = pdf.numPages;
-        const pageNum = pdf.numPages;
-        for (let i = 1; i <= pageNum; i++) {
-          await this.renderPage(i, pdf);
-          console.log("22222222");
-          setTimeout(() => {
-            this.addWaterMark(i);
-          }, 2000);
-        }
-      }).catch(err => {
-        console.log(err);
-        this.errMessage = err.message
-      });
+      pdfjsLib
+        .getDocument("./1.pdf")
+        .promise.then(async (pdf) => {
+          console.log(pdf.numPages);
+          this.totalPage = pdf.numPages;
+          const pageNum = pdf.numPages;
+          for (let i = 1; i <= pageNum; i++) {
+            await this.renderPage(i, pdf);
+            console.log("22222222");
+            setTimeout(() => {
+              this.addWaterMark(i);
+            }, 2000);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          this.errMessage = err.message;
+        });
     },
     async renderPage(pageNum, pdf) {
       this.$nextTick(async () => {
@@ -119,7 +121,16 @@ export default {
         const context = canvas.getContext("2d");
         const page = await pdf.getPage(pageNum);
         console.log(page, "99999");
-        const viewport = page.getViewport({ scale: 0.8 });
+        // const container = this.$refs.pdfContainer
+        // const containerWidth = container.clientWidth;
+        // const containerHeight = container.clientHeight;
+        // Calculate the scale based on the container size and the PDF's natural size
+        // const initialViewport = page.getViewport({ scale: 2 });
+        // const scale = Math.min(
+        //   containerWidth / initialViewport.width,
+        //   containerHeight / initialViewport.height
+        // );
+        const viewport = page.getViewport({ scale: 1.2 });
         canvas.width = viewport.width;
         canvas.height = viewport.height;
         const renderContext = {
@@ -134,7 +145,7 @@ export default {
       //   this.addWaterMark(0)
       // },500)
     },
-  }
+  },
 };
 </script>
 
@@ -147,7 +158,7 @@ export default {
   text-align: center;
   margin-bottom: 10px;
 }
-.err-text{
+.err-text {
   color: red;
   text-align: center;
 }
