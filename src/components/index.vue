@@ -96,7 +96,7 @@ export default {
     async viewPDF() {
       pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
       pdfjsLib
-        .getDocument("./1.pdf")
+        .getDocument(this.src)
         .promise.then(async (pdf) => {
           console.log(pdf.numPages);
           this.totalPage = pdf.numPages;
@@ -121,16 +121,18 @@ export default {
         const context = canvas.getContext("2d");
         const page = await pdf.getPage(pageNum);
         console.log(page, "99999");
-        // const container = this.$refs.pdfContainer
-        // const containerWidth = container.clientWidth;
-        // const containerHeight = container.clientHeight;
-        // Calculate the scale based on the container size and the PDF's natural size
-        // const initialViewport = page.getViewport({ scale: 2 });
-        // const scale = Math.min(
-        //   containerWidth / initialViewport.width,
-        //   containerHeight / initialViewport.height
-        // );
-        const viewport = page.getViewport({ scale: 1.3 });
+        // const screenWidth = window.innerWidth;
+        // const screenHeight = window.innerHeight;
+        // // Calculate a responsive scale based on the screen size (or container size)
+        // const scale =
+        //   Math.min(
+        //     screenWidth / viewport.width,
+        //     screenHeight / viewport.height
+        //   ) // Add a small margin
+
+        // Render the page using the calculated scale
+        const viewport = page.getViewport({ scale: 2 });
+
         canvas.width = viewport.width;
         canvas.height = viewport.height;
         const renderContext = {
