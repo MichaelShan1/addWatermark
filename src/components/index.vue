@@ -71,7 +71,7 @@ export default {
       context.save();
 
       // Rotate and position the watermark in the center
-      context.translate(x - 2000, y + 100); // Translate to center of canvas
+      context.translate(x - 2000, y -280); // Translate to center of canvas
       context.rotate((angle * Math.PI) / 180); // Rotate the watermark
 
       const marginX = fontSize * 5; // Horizontal margin between watermarks
