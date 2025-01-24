@@ -132,7 +132,7 @@ export default {
         //   ) // Add a small margin
 
         // Render the page using the calculated scale
-        const viewport = page.getViewport({ scale: 1 });
+        const viewport = page.getViewport({ scale: 1.3 });
 
         canvas.width = viewport.width * dpi;
         canvas.height = viewport.height * dpi;
