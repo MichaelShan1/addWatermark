@@ -71,7 +71,7 @@ export default {
       context.save();
 
       // Rotate and position the watermark in the center
-      context.translate(x - 1000, y + 100); // Translate to center of canvas
+      context.translate(x - 2000, y + 100); // Translate to center of canvas
       context.rotate((angle * Math.PI) / 180); // Rotate the watermark
 
       const marginX = fontSize * 5; // Horizontal margin between watermarks
@@ -121,7 +121,7 @@ export default {
         const context = canvas.getContext("2d");
         const page = await pdf.getPage(pageNum);
         console.log(page, "99999", canvas);
-        const dpi = 5;
+        const dpi = 10;
         // const screenWidth = window.innerWidth;
         // const screenHeight = window.innerHeight;
         // // Calculate a responsive scale based on the screen size (or container size)
@@ -132,7 +132,7 @@ export default {
         //   ) // Add a small margin
 
         // Render the page using the calculated scale
-        const viewport = page.getViewport({ scale: 1.3 });
+        const viewport = page.getViewport({ scale: 0.5 });
 
         canvas.width = viewport.width * dpi;
         canvas.height = viewport.height * dpi;
