@@ -121,7 +121,7 @@ export default {
         const context = canvas.getContext("2d");
         const page = await pdf.getPage(pageNum);
         console.log(page, "99999", canvas);
-        const dpi = 15;
+        const dpi = 5;
         // const screenWidth = window.innerWidth;
         // const screenHeight = window.innerHeight;
         // // Calculate a responsive scale based on the screen size (or container size)
@@ -132,7 +132,7 @@ export default {
         //   ) // Add a small margin
 
         // Render the page using the calculated scale
-        const viewport = page.getViewport({ scale: 0.1 });
+        const viewport = page.getViewport({ scale: 1 });
 
         canvas.width = viewport.width * dpi;
         canvas.height = viewport.height * dpi;
