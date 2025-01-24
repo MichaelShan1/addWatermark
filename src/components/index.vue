@@ -7,7 +7,7 @@
       style="text-align: center"
       ref="pdfContainer"
     >
-      <canvas :ref="'pdfCanvas' + pageNumber"></canvas>
+      <canvas :ref="'pdfCanvas' + pageNumber" style="width: 400px;"></canvas>
     </div>
     <div v-if="errMessage" class="err-text">{{ errMessage }}</div>
   </div>
@@ -121,7 +121,7 @@ export default {
         const context = canvas.getContext("2d");
         const page = await pdf.getPage(pageNum);
         console.log(page, "99999", canvas);
-        const dpi = 5;
+        const dpi = 10;
         // const screenWidth = window.innerWidth;
         // const screenHeight = window.innerHeight;
         // // Calculate a responsive scale based on the screen size (or container size)
