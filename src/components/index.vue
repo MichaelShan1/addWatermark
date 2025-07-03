@@ -7,7 +7,12 @@
       style="text-align: center"
       ref="pdfContainer"
     >
-      <canvas :ref="'pdfCanvas' + pageNumber" style="width: 350px;"></canvas>
+      <canvas
+        :ref="'pdfCanvas' + pageNumber"
+        style="width: 350px"
+        v-lazy="lazyLoadPdf"
+        :id="pageNumber"
+      ></canvas>
     </div>
     <div v-if="errMessage" class="err-text">{{ errMessage }}</div>
   </div>
@@ -27,7 +32,8 @@ export default {
       totalPage: 0,
       waterMark: "",
       message: "Hello, world!",
-      src: "https://xddt.obs.cn-east-3.myhuaweicloud.com/clogx6uwh0t33tenant/apps/plan/f0/0d/f00d932268c54fd0b7d88bf065f4a564.pdf",
+      src: "https://xddt.obs.cn-east-3.myhuaweicloud.com/wxapp/zhongsu/pdf.pdf",
+      pdfOBJ: "",
     };
   },
   created() {
@@ -46,9 +52,35 @@ export default {
   beforeDestroy() {
     // Clean up the event listener when the component is destroyed
   },
+  directives: {
+    lazy: {
+      inserted(el, binding) {
+        const observer = new IntersectionObserver((entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              console.log(el, "lazyLoaddddd");
+              binding.value(el); // Call the function when visible
+              observer.unobserve(el); // Stop observing after loading
+            }
+          });
+        });
+        observer.observe(el);
+        el.__observer = observer;
+      },
+      unbind(el) {
+        if (el.__observer) {
+          el.__observer.disconnect(); // Clean up
+        }
+      },
+    },
+  },
   methods: {
-    handlePdfLink(event) {
-      console.log(event.data);
+    async lazyLoadPdf(el) {
+      console.log(el, "invoke Functionnnn", el.id);
+      await this.renderPage(Number(el.id), this.pdfOBJ);
+      setTimeout(() => {
+        this.addWaterMark(el.id);
+      },200);
     },
     addWaterMark(pageNum) {
       console.log(pageNum);
@@ -71,7 +103,7 @@ export default {
       context.save();
 
       // Rotate and position the watermark in the center
-      context.translate(x - 2000, y -280); // Translate to center of canvas
+      context.translate(x - 550, y - 280); // Translate to center of canvas
       context.rotate((angle * Math.PI) / 180); // Rotate the watermark
 
       const marginX = fontSize * 5; // Horizontal margin between watermarks
@@ -100,14 +132,15 @@ export default {
         .promise.then(async (pdf) => {
           console.log(pdf.numPages);
           this.totalPage = pdf.numPages;
-          const pageNum = pdf.numPages;
-          for (let i = 1; i <= pageNum; i++) {
-            await this.renderPage(i, pdf);
-            console.log("22222222");
-            setTimeout(() => {
-              this.addWaterMark(i);
-            }, 2000);
-          }
+          this.pdfOBJ = pdf;
+          // const pageNum = pdf.numPages;
+          // for (let i = 10; i <= 20; i++) {
+          //   await this.renderPage(i, pdf);
+          //   console.log("22222222");
+          //   setTimeout(() => {
+          //     this.addWaterMark(i);
+          //   });
+          // }
         })
         .catch((err) => {
           console.log(err);
@@ -121,7 +154,7 @@ export default {
         const context = canvas.getContext("2d");
         const page = await pdf.getPage(pageNum);
         console.log(page, "99999", canvas);
-        const dpi = 5;
+        const dpi = 1.5;
         // const screenWidth = window.innerWidth;
         // const screenHeight = window.innerHeight;
         // // Calculate a responsive scale based on the screen size (or container size)
@@ -145,11 +178,8 @@ export default {
         };
         // Render the page into the canvas
         page.render(renderContext);
+        // this.addWaterMark(pageNum)
       });
-
-      // setTimeout(()=>{
-      //   this.addWaterMark(0)
-      // },500)
     },
   },
 };
