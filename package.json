@@ -2,8 +2,10 @@
   "name": "add-water-mark",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://github.com/MichaelShan1/addWatermark",
   "scripts": {
     "serve": "vue-cli-service serve",
+    "predeploy": "npm run build",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "deploy": "gh-pages -d dist"
